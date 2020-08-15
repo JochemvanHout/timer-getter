@@ -1,74 +1,66 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-const inputFormComponent = (props) => (
-  <form>
-    <label htmlFor="minimumTime">
-      Minimum time
-      <br />
+const labelTemplates = [
+  { type: 'min', label: 'Minimum time' },
+  { type: 'max', label: 'Maximum time' },
+];
 
-      <input
-        id="minimumTime"
-        name="minTimeNum"
-        type="number"
-        placeholder="1"
-        value={props.data.minTimeNum}
-        onChange={props.handleChange}
-      />
+const units = ['hour(s)', 'day(s)', 'month(s)', 'year'];
 
-      <select
-        name="minTimeUnit"
-        value={props.minTimeUnit}
-        placeholder="days"
-        onChange={props.handleChange}
-      >
-        <option value="hours">hour(s)</option>
-        <option value="days">day(s)</option>
-        <option value="months">month(s)</option>
-        <option value="year">year</option>
-      </select>
+const InputFormComponent = (props) => {
+  const { data, handleChange, handleSubmit } = props;
 
-    </label>
+  return (
+    <form>
+      {labelTemplates.map(({ type, label }) => (
+        <React.Fragment key={type}>
+          <label htmlFor={`${type}Time`}>
+            {label}
+            <br />
+            <input
+              id={`${type}Time`}
+              name={`${type}TimeNum`}
+              type="number"
+              placeholder="1"
+              value={data[`${type}TimeNum`]}
+              onChange={handleChange}
+            />
+          </label>
+          <select
+            name={`${type}TimeUnit`}
+            value={props[`${type}TimeUnit`]}
+            placeholder="days"
+            onChange={handleChange}
+          >
+            {units.map((unit) => (
+              <option key={unit} value={unit.replace(/[()]/g, '')}>
+                {unit}
+              </option>
+            ))}
+          </select>
 
-    <br />
+          <br />
+        </React.Fragment>
+      ))}
 
-    <label htmlFor="maximumTime">
-      Maximum time
+      <button type="button" onClick={handleSubmit}>
+        Go
+      </button>
+    </form>
+  );
+};
 
-      <br />
+export default InputFormComponent;
 
-      <input
-        id="maximumTime"
-        name="maxTimeNum"
-        type="number"
-        placeholder="5"
-        value={props.data.maxTimeNum}
-        onChange={props.handleChange}
-      />
-
-      <select
-        name="maxTimeUnit"
-        value={props.data.maxTimeUnit}
-        onChange={props.handleChange}
-      >
-        <option value="hours">hour(s)</option>
-        <option value="days">day(s)</option>
-        <option value="months">month(s)</option>
-        <option value="year">year</option>
-      </select>
-
-    </label>
-
-    <br />
-
-    <button
-      type="button"
-      onClick={props.handleSubmit}
-    >
-      Go
-    </button>
-
-  </form>
-
-);
-
-export default inputFormComponent;
+InputFormComponent.propTypes = {
+  data: PropTypes.shape({
+    chosenTime: PropTypes.string,
+    maxTimeNum: PropTypes.number,
+    maxTimeUnit: PropTypes.string,
+    minTimeNum: PropTypes.number,
+    minTimeUnit: PropTypes.string,
+  }).isRequired,
+  handleChange: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+};
