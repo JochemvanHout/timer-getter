@@ -9,29 +9,29 @@ export default class Form extends Component {
 
     this.state = {
       chosenTime: '',
-      minTimeNum: 1,
-      minTimeUnit: 'days',
       maxTimeNum: 5,
       maxTimeUnit: 'months',
+      minTimeNum: 1,
+      minTimeUnit: 'days',
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(e) {
-    const { name, value } = e.target;
-
-    this.setState({
-      [name]: value,
-    });
+  handleChange({ target: { name, value } }) {
+    this.setState({ [name]: value });
   }
 
   handleSubmit(e) {
     e.preventDefault();
 
     const {
-      chosenTime, minTimeNum, minTimeUnit, maxTimeNum, maxTimeUnit,
+      chosenTime,
+      maxTimeNum,
+      maxTimeUnit,
+      minTimeNum,
+      minTimeUnit,
     } = this.state;
 
     const newMinTime = minTimeNum * dateENUM[minTimeUnit];
@@ -39,28 +39,28 @@ export default class Form extends Component {
     let newChosenTime = chosenTime;
 
     if (newMinTime <= newMaxTime) {
-      newChosenTime = prettyms(Math.round(newMinTime + (Math.random() * (newMaxTime - newMinTime))), { verbose: true, unitCount: 2 });
+      newChosenTime = prettyms(
+        Math.round(newMinTime + Math.random() * (newMaxTime - newMinTime)),
+        { verbose: true, unitCount: 2 },
+      );
     }
 
-    this.setState({
-      chosenTime: newChosenTime,
-    });
+    this.setState({ chosenTime: newChosenTime });
   }
 
   render() {
+    const { chosenTime } = this.state;
+    const data = { ...this.state };
+
     return (
       <div>
         <InputFormComponent
           handleChange={this.handleChange}
           handleSubmit={this.handleSubmit}
-          data={this.state}
+          data={data}
         />
 
-        <p>
-          Time:
-          {' '}
-          {this.state.chosenTime}
-        </p>
+        <p>{`Time: ${chosenTime}`}</p>
       </div>
     );
   }
